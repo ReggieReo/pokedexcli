@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(config) error
+	callback    func(*config) error
 }
 
 type config struct {
@@ -20,7 +20,10 @@ type config struct {
 
 func run() {
 	scanner := bufio.NewScanner(os.Stdin)
-	c := config{}
+	c := config{
+		next: "https://pokeapi.co/api/v2/location/?limit=20&offset=20",
+		previous: "",
+	}
 	for {
 		// scan input
 		fmt.Print("pokedex > ")
@@ -35,7 +38,7 @@ func run() {
 			continue
 		}
 		// else execute commandtext
-		err := cCommand.callback(c)
+		err := cCommand.callback(&c)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -63,16 +66,12 @@ func getCommand() map[string]cliCommand {
 		"map": {
 			name:        "map",
 			description: "displays the names of 20 location areas in the Pokemon world",
-			callback: func(c config) error {
-				return nil
-			},
+			callback: commandMap,
 		},
 		"mapb": {
 			name:        "mapb",
 			description: "displays the previous 20 locations.",
-			callback: func(c config) error {
-				return nil
-			},
+			callback: commandMapb,
 		},
 	}
 	return command
