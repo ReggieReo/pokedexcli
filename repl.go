@@ -13,17 +13,9 @@ type cliCommand struct {
 	callback    func(*config) error
 }
 
-type config struct {
-	next string
-	previous string
-}
 
-func run() {
+func run(c *config) {
 	scanner := bufio.NewScanner(os.Stdin)
-	c := config{
-		next: "https://pokeapi.co/api/v2/location/?limit=20&offset=20",
-		previous: "",
-	}
 	for {
 		// scan input
 		fmt.Print("pokedex > ")
@@ -38,10 +30,9 @@ func run() {
 			continue
 		}
 		// else execute commandtext
-		err := cCommand.callback(&c)
+		err := cCommand.callback(c)
 		if err != nil {
 			fmt.Println(err)
-			return
 		}
 	}
 }
@@ -58,11 +49,6 @@ func getCommand() map[string]cliCommand {
 			description: "Displays a help message",
 			callback:    commandHelp,
 		},
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    commandExit,
-		},
 		"map": {
 			name:        "map",
 			description: "displays the names of 20 location areas in the Pokemon world",
@@ -72,6 +58,11 @@ func getCommand() map[string]cliCommand {
 			name:        "mapb",
 			description: "displays the previous 20 locations.",
 			callback: commandMapb,
+		},
+		"exit": {
+			name:        "exit",
+			description: "Exit the Pokedex",
+			callback:    commandExit,
 		},
 	}
 	return command
