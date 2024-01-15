@@ -7,17 +7,26 @@ import (
 	"net/http"
 )
 
-const (
-	baseURL = "https://pokeapi.co/api/v2"
-)
-
 func (c *Client) GetLocation(url *string) (Location, error) {
 	endpoint := "/location"
 	fullURL := baseURL + endpoint
+	// make Location struct for
+	locationAreasResp := Location{}
 	if url != nil {
 		fullURL = *url
 	}
 
+	cDat, ok := c.cache.Get(fullURL)
+	// if there cache unmashal data and return them
+	if ok {
+		err := json.Unmarshal(cDat, &locationAreasResp)
+		if err != nil {
+			return Location{}, err
+		}
+		return locationAreasResp, nil
+	}
+
+	// else make a request normally
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
 		return Location{}, err
@@ -37,9 +46,9 @@ func (c *Client) GetLocation(url *string) (Location, error) {
 	if err != nil {
 		return Location{}, err
 	}
-
-	locationAreasResp := Location{}
+	c.cache.Add(fullURL, dat)
 	err = json.Unmarshal(dat, &locationAreasResp)
+
 	if err != nil {
 		return Location{}, err
 	}

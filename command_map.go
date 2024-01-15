@@ -7,7 +7,7 @@ import (
 	"github.com/ReggieReo/pokedexcli/internal/pokeapi"
 )
 
-func commandMap(c *config) error {
+func commandMap(c *config, input ...string) error {
 	locationsINFO, err := c.client.GetLocation(c.next)
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func commandMap(c *config) error {
 	return nil
 }
 
-func commandMapb(c *config) error {
+func commandMapb(c *config, input ...string) error {
 	if c.previous == nil {
 		return errors.New("you are on the first page")
 	}

@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 
@@ -30,7 +30,7 @@ func run(c *config) {
 			continue
 		}
 		// else execute commandtext
-		err := cCommand.callback(c)
+		err := cCommand.callback(c, cleaned...)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -63,6 +63,11 @@ func getCommand() map[string]cliCommand {
 			name:        "exit",
 			description: "Exit the Pokedex",
 			callback:    commandExit,
+		},
+		"explore": {
+			name:        "explore",
+			description: "explore the given the map area",
+			callback: commandExplore,
 		},
 	}
 	return command
